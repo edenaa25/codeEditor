@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Block Page</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+</head>
+
+<body>
+      <h1 id="h1"></h1>
+      <p id="explanation"></p>
+      <p>Good luck champion!</p>
+      <p id="correctAnswer"></p>
+      <div id="codeEditor"></span></div> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.socket.io/4.1.2/socket.io.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script>
+
+    $(document).ready(function () {
+      const socket = io();
+
+      // Get the code block index from the URL
+      const blockIndex = window.location.pathname.split('/').pop();
+
+      // Emit that the user has joined the code block page
+      socket.emit('joinCodeBlock', { blockIndex });
+
+      let mentorSocketId;
+
+      // Create CodeMirror instance
+      const codeEditor = CodeMirror(document.getElementById('codeEditor'), {
+        value: '', // Initial code content
+        mode: 'javascript',
+        lineNumbers: true,
+        theme: 'default',
+        indentUnit: 2,
+       readOnly: true, // Initial read-only for everyone
+      });
+
+      // Listen for the initial code block data
+      socket.on('initialCodeBlockData', (data) => {
+        //console.log(data);
+            // Display the code block title+ h1 + <p>
+          $('#h1').text("Code Block "+data.title+" Function");
+          document.title = `Code Block - ${data.title}`;
+          $('#explanation').text(data.explanation);
+          // Set the initial code in the CodeMirror editor
+          codeEditor.setValue(data.code);
+
+       });
+
+       //Listen for mentor's socket ID
+      socket.on('mentorSocket', (mentorSocket) => {
+        mentorSocketId = mentorSocket;
+        // If the current user is the mentor, allow editing
+        if (socket.id === mentorSocketId) {
+          codeEditor.setOption('readOnly', true);
+        }else{
+          codeEditor.setOption('readOnly', false);
+        }
+      });
+
+       // Debounce the code change events using lodash's debounce
+       const debouncedCodeChange = _.debounce((newCode) => {
+        socket.emit('codeChange', { blockIndex, code: newCode });
+      }, 500); // Adjust the debounce delay as needed
+
+      
+      // Listen for real-time code changes
+      socket.on('codeChange', (data) => {
+
+        // Update the code in the CodeMirror editor
+         const currentCode = codeEditor.getValue();
+          // console.log(currentCode);
+          // console.log(data.code);
+
+          // Only update if the code is different to avoid unnecessary changes
+          if (currentCode !== data.code) {
+              codeEditor.setValue(data.code);
+          }
+
+          // If the current user is not the mentor, update the editor based on role
+          if (socket.id !== mentorSocketId) {
+              codeEditor.setOption('readOnly', false);
+          }
+       });
+
+       
+
+       // Display smiley when code matches solution
+       socket.on('displaySmiley', (smile) => {
+            $('#correctAnswer').text(smile);
+        });
+
+
+       // Handle local code changes and emit them to the server
+      //  codeEditor.on('change',  function () {
+      //   const newCode = codeEditor.getValue();
+      //   socket.emit('codeChange', { blockIndex, code: newCode });
+      // });
+
+         // Debounce the code change events
+
+    });
+  </script>
+</body>
+</html>
