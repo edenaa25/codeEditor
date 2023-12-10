@@ -69,9 +69,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Listen for real-time code changes
   socket.on("codeChange", (data) => {
+    console.log("data.code obj from codeChange func code block : " + data.code);
     // Update the code in the CodeMirror editor
     const currentCode = codeEditor.getValue();
-    console.log("currentCode from codeChange func codeblock: " + codeChange);
+    console.log("currentCode from codeChange func codeblock: " + currentCode);
 
     // Only update if the code is different to avoid unnecessary changes
     if (currentCode !== data.code) {
