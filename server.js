@@ -11,7 +11,7 @@ const sqlite3 = require("sqlite3").verbose(); // Import SQLite library
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
-  transports: ["websocket"],
+  transports: ["websocket", "polling"],
 });
 // const io = socketIO(server);
 
