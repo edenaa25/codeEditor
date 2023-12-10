@@ -12,15 +12,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
-// Map of code blocks (for simplicity, you can use a database in a real-world scenario)
-// const codeBlocks = [
-//     { title: 'Async case', code: 'async function fetchData() { /* your code here */ }' },
-//     { title: 'Callback', code: 'function callback() { /* your code here */ }' },
-//     { title: 'Recursion', code: 'function Recursion() { /* your code here */ }' },
-//     { title: 'Fibonacci', code: 'function Fibonacci() { /* your code here */ }' },
-//   ];
-
-// Connect to SQLite database (this will create a new file named "database.db" in your project)
+// Connect to SQLite database 
 const db = new sqlite3.Database("DataBase.db", (err) => {
   if (err) {
     return console.error(err.message);
@@ -28,26 +20,8 @@ const db = new sqlite3.Database("DataBase.db", (err) => {
   console.log("Connected to the in-memory SQlite database.");
 });
 
-// db.run(`
-//   CREATE TABLE IF NOT EXISTS codeBlocks (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     title TEXT,
-//     code TEXT
-//   )
-// `);
 
-// db.run(`INSERT INTO codeBlocks (titel,code) VALUES ('Async case','async function fetchData() { /* your code here */ }'),
-//     ('Callback','function callback() { /* your code here */ }'),
-//     ('Recursion','function Recursion() { /* your code here */ }'),
-//     ('Fibonacci','async function Fibonacci() { /* your code here */ }')`, function(err) {
-//     if (err) {
-//       return console.log(err.message);
-//     }
-//     // get the last insert id
-//     console.log(`A row has been inserted with rowid ${this.lastID}`);
-//   });
-
-// Serve static files from the 'public' directoryד
+// Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/codeBlock/:id", (req, res) => {
@@ -62,16 +36,16 @@ app.get("/codeBlock/:id", (req, res) => {
   });
 });
 
-// Set up a simple route for the lobby
+// Set up a route for the lobby pahe (index.html)
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 //const codeBlockData = new Map();
 
-let mentorSocket = null; // To store the mentor's socket// global value
+let mentorSocket = null; // To store the mentor's socket // global value
 
-// Handle connections
+// Handle connections with socket
 io.on("connection", (socket) => {
   // Set default role to 'student'
   socket.role = "student";
@@ -135,6 +109,8 @@ io.on("connection", (socket) => {
           // Remove spaces and line breaks for comparison
           const userCodeWithoutSpaces = data.code.replace(/\s/g, "");
           const solutionWithoutSpaces = solutionCode.replace(/\s/g, "");
+
+          console.log(userCodeWithoutSpaces);
 
           // Check if the code matches the solution
           if (userCodeWithoutSpaces === solutionWithoutSpaces) {
