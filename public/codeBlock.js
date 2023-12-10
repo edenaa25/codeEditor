@@ -9,8 +9,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let mentorSocketId;
 
+  // Create and append HTML elements
+  const h1 = document.createElement("h1");
+  h1.id = "h1";
+  document.body.appendChild(h1);
+
+  const explanation = document.createElement("p");
+  explanation.id = "explanation";
+  document.body.appendChild(explanation);
+
+  const goodLuckParagraph = document.createElement("p");
+  goodLuckParagraph.textContent = "Good luck champion!";
+  document.body.appendChild(goodLuckParagraph);
+
+  const correctAnswer = document.createElement("p");
+  correctAnswer.id = "correctAnswer";
+  document.body.appendChild(correctAnswer);
+
+  const codeEditorContainer = document.createElement("div");
+  codeEditorContainer.id = "codeEditor";
+  document.body.appendChild(codeEditorContainer);
+
   // Create CodeMirror instance
-  const codeEditor = CodeMirror(document.getElementById("codeEditor"), {
+  const codeEditor = CodeMirror(codeEditorContainer, {
     value: "", // Initial code content
     mode: "javascript",
     lineNumbers: true,
@@ -21,11 +42,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Listen for the initial code block data
   socket.on("initialCodeBlockData", (data) => {
+    //DATA is a row from database
     // Display the code block title+ h1 + <p>
-    document.getElementById("h1").innerText =
-      "Code Block " + data.title + " Function";
+    h1.textContent = "Code Block " + data.title + " Function";
     document.title = `Code Block - ${data.title}`;
-    document.getElementById("explanation").innerText = data.explanation;
+    explanation.textContent = data.explanation;
     // Set the initial code in the CodeMirror editor
     codeEditor.setValue(data.code);
   });
@@ -33,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Listen for mentor's socket ID
   socket.on("mentorSocket", (mentorSocket) => {
     mentorSocketId = mentorSocket;
-    // If the current user is the mentor, allow editing
+    // If the current user is the student, allow editing
     if (socket.id === mentorSocketId) {
       codeEditor.setOption("readOnly", true);
     } else {
@@ -41,10 +62,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Debounce the code change events using lodash's debounce
+  // Debounce the code change events using lodash's debounce- the delay help for a good sync
   const debouncedCodeChange = _.debounce((newCode) => {
     socket.emit("codeChange", { blockIndex, code: newCode });
-  }, 500); // Adjust the debounce delay as needed
+  }, 250); // Adjust the debounce delay as needed
 
   // Listen for real-time code changes
   socket.on("codeChange", (data) => {
@@ -62,21 +83,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  // Display smiley when code matches solution
+  socket.on("displaySmiley", (smile) => {
+    correctAnswer.textContent = smile;
+  });
+
+  // Handle local code changes and emit them to the server
   codeEditor.on("change", function () {
     const newCode = codeEditor.getValue();
     debouncedCodeChange(newCode);
   });
-
-  // Display smiley when code matches solution
-  socket.on("displaySmiley", (smile) => {
-    document.getElementById("correctAnswer").innerText = smile;
-  });
-
-  // Handle local code changes and emit them to the server
-  // codeEditor.on('change',  function () {
-  //   const newCode = codeEditor.getValue();
-  //   socket.emit('codeChange', { blockIndex, code: newCode });
-  // });
-
-  // Debounce the code change events
 });

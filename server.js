@@ -5,7 +5,6 @@ const express = require("express");
 const http = require("http");
 const socketIO = require("socket.io");
 const path = require("path");
-//const hljs = require('highlight.js');
 const sqlite3 = require("sqlite3").verbose(); // Import SQLite library
 
 const app = express();

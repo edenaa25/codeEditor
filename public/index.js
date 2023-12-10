@@ -18,11 +18,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // // Handle code changes
-  // socket.on('codeChange', (data) => {
-  //     // Handle code changes if needed
-  // });
-
   // Your code for handling the click event and navigating to the code block page goes here
   document
     .getElementById("codeBlockList")
