@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.body.appendChild(explanation);
 
   const goodLuckParagraph = document.createElement("p");
-  goodLuckParagraph.textContent = "Good luck champion!";
+  explanation.id = "goodLuckParagraph";
   document.body.appendChild(goodLuckParagraph);
 
   const correctAnswer = document.createElement("p");
@@ -56,8 +56,10 @@ document.addEventListener("DOMContentLoaded", function () {
     mentorSocketId = mentorSocket;
     // If the current user is the student, allow editing
     if (socket.id === mentorSocketId) {
+      goodLuckParagraph.innerHTML = "<strong>You are in a mentor role</strong>";
       codeEditor.setOption("readOnly", true);
     } else {
+      goodLuckParagraph.innerHTML = "<strong>Good luck champion!</strong>";
       codeEditor.setOption("readOnly", false);
     }
   });
