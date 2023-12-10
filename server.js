@@ -10,7 +10,10 @@ const sqlite3 = require("sqlite3").verbose(); // Import SQLite library
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = socketIO(server, {
+  transports: ["websocket"],
+});
+// const io = socketIO(server);
 
 // Connect to SQLite database 
 const db = new sqlite3.Database("DataBase.db", (err) => {
