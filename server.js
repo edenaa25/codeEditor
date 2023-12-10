@@ -108,7 +108,12 @@ io.on("connection", (socket) => {
           const userCodeWithoutSpaces = data.code.replace(/\s/g, "");
           const solutionWithoutSpaces = solutionCode.replace(/\s/g, "");
 
-          console.log(userCodeWithoutSpaces);
+          console.log(
+            "userCodeWithoutSpaces from server:" + userCodeWithoutSpaces
+          );
+          console.log(
+            "solutionWithoutSpaces from server: " + solutionWithoutSpaces
+          );
 
           // Check if the code matches the solution
           if (userCodeWithoutSpaces === solutionWithoutSpaces) {

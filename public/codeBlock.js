@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
   socket.on("codeChange", (data) => {
     // Update the code in the CodeMirror editor
     const currentCode = codeEditor.getValue();
+    console.log("currentCode from codeChange func codeblock: " + codeChange);
 
     // Only update if the code is different to avoid unnecessary changes
     if (currentCode !== data.code) {
@@ -92,5 +93,6 @@ document.addEventListener("DOMContentLoaded", function () {
   codeEditor.on("change", function () {
     const newCode = codeEditor.getValue();
     debouncedCodeChange(newCode);
+    console.log("newCode change func from code block: " + newCode);
   });
 });
