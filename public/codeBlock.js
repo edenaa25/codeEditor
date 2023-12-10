@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Debounce the code change events using lodash's debounce- the delay help for a good sync
   const debouncedCodeChange = _.debounce((newCode) => {
     socket.emit("codeChange", { blockIndex, code: newCode });
-  }, 1000); // Adjust the debounce delay as needed
+  }, 500); // Adjust the debounce delay as needed
 
   // Listen for real-time code changes
   socket.on("codeChange", (data) => {
@@ -96,6 +96,6 @@ document.addEventListener("DOMContentLoaded", function () {
   codeEditor.on("change", function () {
     const newCode = codeEditor.getValue();
     debouncedCodeChange(newCode);
-    console.log("newCode change func from code block: " + newCode);
+    console.log("Change func from code block: " + newCode);
   });
 });
