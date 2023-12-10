@@ -1,11 +1,8 @@
-//npm init -y
-//npm install express socket.io highlight.js
-//sqlite3
 const express = require("express");
 const http = require("http");
 const socketIO = require("socket.io");
 const path = require("path");
-const sqlite3 = require("sqlite3").verbose(); // Import SQLite library
+const sqlite3 = require("sqlite3").verbose(); // Import SQLite library for DB
 
 const app = express();
 const server = http.createServer(app);
