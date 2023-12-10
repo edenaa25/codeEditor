@@ -10,19 +10,15 @@ const sqlite3 = require("sqlite3").verbose(); // Import SQLite library
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server, {
-  transports: ["websocket", "polling"],
-});
-// const io = socketIO(server);
+const io = socketIO(server);
 
-// Connect to SQLite database 
+// Connect to SQLite database
 const db = new sqlite3.Database("DataBase.db", (err) => {
   if (err) {
     return console.error(err.message);
   }
   console.log("Connected to the in-memory SQlite database.");
 });
-
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, "public")));
