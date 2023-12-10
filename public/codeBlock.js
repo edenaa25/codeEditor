@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
     lineNumbers: true,
     theme: "default",
     indentUnit: 2,
-    readOnly: true, // Initial read-only for everyone
+    //readOnly: true, // Initial read-only for everyone
   });
 
   // Listen for the initial code block data
@@ -64,10 +64,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Debounce the code change events using lodash's debounce- the delay help for a good sync
-  const debouncedCodeChange = _.debounce((newCode) => {
+  // Debounce the code change events using lodash's debounce - the delay help for a good sync
+  const debouncedCodeChange = _.throttle((newCode) => {
     socket.emit("codeChange", { blockIndex, code: newCode });
-  }, 500); // Adjust the debounce delay as needed
+  }, 700); // Adjust the debounce delay as needed
 
   // Listen for real-time code changes
   socket.on("codeChange", (data) => {
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
     correctAnswer.textContent = smile;
   });
 
-  // Handle local code changes and emit them to the server
+  //Handle local code changes and emit them to the server
   codeEditor.on("change", function () {
     const newCode = codeEditor.getValue();
     debouncedCodeChange(newCode);

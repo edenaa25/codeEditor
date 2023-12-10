@@ -39,8 +39,6 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-//const codeBlockData = new Map();
-
 let mentorSocket = null; // To store the mentor's socket // global value
 
 // Handle connections with socket
@@ -53,8 +51,6 @@ io.on("connection", (socket) => {
       socket.emit("codeBlocks", rows);
     }
   });
-
-  // Map to store code data for each code block
 
   // Emit code block data to the client when they join the code block page
   socket.on("joinCodeBlock", ({ blockIndex }) => {
@@ -76,7 +72,6 @@ io.on("connection", (socket) => {
     socket.join(blockIndex);
 
     // Retrieve code block from the database
-
     db.get(
       "SELECT * FROM codeBlocks WHERE ID = ?",
       [blockIndex],
@@ -91,9 +86,6 @@ io.on("connection", (socket) => {
 
   // Handle code changes
   socket.on("codeChange", (data) => {
-    // Broadcast the code change to all connected clients
-    //socket.broadcast.emit('codeChange', data);
-
     // Broadcast the code change only to clients interested in the specific code block
     io.to(data.blockIndex).emit("codeChange", data);
 

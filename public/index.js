@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Your code for handling the click event and navigating to the code block page goes here
+  // Handling the click event and navigating to the code block page
   document
     .getElementById("codeBlockList")
     .addEventListener("click", function (event) {
