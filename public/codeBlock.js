@@ -10,25 +10,11 @@ document.addEventListener("DOMContentLoaded", function () {
   let mentorSocketId;
 
   // Create and append HTML elements
-  const h1 = document.createElement("h1");
-  h1.id = "h1";
-  document.body.appendChild(h1);
-
-  const explanation = document.createElement("p");
-  explanation.id = "explanation";
-  document.body.appendChild(explanation);
-
-  const goodLuckParagraph = document.createElement("p");
-  explanation.id = "goodLuckParagraph";
-  document.body.appendChild(goodLuckParagraph);
-
-  const correctAnswer = document.createElement("p");
-  correctAnswer.id = "correctAnswer";
-  document.body.appendChild(correctAnswer);
-
-  const codeEditorContainer = document.createElement("div");
-  codeEditorContainer.id = "codeEditor";
-  document.body.appendChild(codeEditorContainer);
+  const h1 = document.getElementById("h1");
+  const explanation = document.getElementById("explanation");
+  const goodLuckParagraph = document.getElementById("goodLuckParagraph");
+  const correctAnswer = document.getElementById("correctAnswer");
+  const codeEditorContainer = document.getElementById("codeEditor");
 
   // Create CodeMirror instance
   const codeEditor = CodeMirror(codeEditorContainer, {
@@ -42,8 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Listen for the initial code block data
   socket.on("initialCodeBlockData", (data) => {
-    //DATA is a row from database
-    // Display the code block title+ h1 + <p>
     h1.textContent = "Code Block " + data.title + " Function";
     document.title = `Code Block - ${data.title}`;
     explanation.textContent = data.explanation;
@@ -76,15 +60,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const currentCode = codeEditor.getValue();
     console.log("currentCode from codeChange func codeblock: " + currentCode);
 
+    let savedSelection;
+
+    // Only update if the code is different to avoid unnecessary changes
+    // if (currentCode !== data.code) {
+    //   codeEditor.setValue(data.code);
+    // }
+
     // Only update if the code is different to avoid unnecessary changes
     if (currentCode !== data.code) {
       codeEditor.setValue(data.code);
+      // Restore cursor position if savedSelection is defined
+      if (savedSelection) {
+        rangy.restoreSelection(savedSelection);
+      }
     }
 
     // If the current user is not the mentor, update the editor based on role
     if (socket.id !== mentorSocketId) {
       codeEditor.setOption("readOnly", false);
     }
+    // rangy.restoreSelection(savedSelection);
   });
 
   // Display smiley when code matches solution
