@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Debounce the code change events using lodash's debounce - the delay help for a good sync
   const debouncedCodeChange = _.throttle((newCode) => {
     socket.emit("codeChange", { blockIndex, code: newCode });
-  }, 700); // Adjust the debounce delay as needed
+  }, 1000); // Adjust the debounce delay as needed
 
   // Listen for real-time code changes
   socket.on("codeChange", (data) => {
@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Restore cursor position if cursor is defined
       if (cursor) {
         codeEditor.setValue(data.code);
+        codeEditor.focus();
         codeEditor.setCursor(cursor);
       }
     }
