@@ -109,6 +109,9 @@ document.addEventListener("DOMContentLoaded", function () {
     indentUnit: 2,
   });
 
+  // Variable to store the cursor position
+  let savedCursor;
+
   // Function to handle local code changes
   const localChangeHandler = function () {
     const newCode = codeEditor.getValue();
@@ -117,7 +120,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Debounce the code change events using lodash's debounce
   const debouncedCodeChange = _.throttle((newCode) => {
-    socket.emit("codeChange", { blockIndex, code: newCode });
+    socket.emit("codeChange", {
+      blockIndex,
+      code: newCode,
+      cursor: savedCursor,
+    });
   }, 500);
 
   // Listen for real-time code changes
@@ -125,11 +132,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const currentCode = codeEditor.getValue();
 
     if (currentCode !== data.code) {
-      codeEditor.operation(() => {
-        const cursorPos = codeEditor.getCursor(); // Save cursor position
-        codeEditor.setValue(data.code);
-        codeEditor.setCursor(cursorPos); // Restore cursor position
-      });
+      savedCursor = codeEditor.getCursor(); // Save cursor position
+      codeEditor.setValue(data.code);
+      codeEditor.setCursor(data.cursor); // Restore cursor position
     }
 
     // If the current user is not the mentor, update the editor based on role
