@@ -56,13 +56,14 @@ document.addEventListener("DOMContentLoaded", function () {
   // Listen for real-time code changes
   socket.on("codeChange", (data) => {
     const currentCode = codeEditor.getValue();
-    const cursor = codeEditor.getCursor();
 
-    if (currentCode !== data.code) {
-      codeEditor.setValue(data.code);
-      codeEditor.focus();
-      codeEditor.setCursor(codeEditor.getCursor(), 0);
-    }
+    _.throttle(() => {
+      if (currentCode !== data.code) {
+        codeEditor.setValue(data.code);
+        codeEditor.focus();
+        codeEditor.setCursor(codeEditor.lineCount(), 0);
+      }
+    }, 500);
 
     // If the current user is not the mentor, update the editor based on role
     if (socket.id !== mentorSocketId) {
