@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const socket = io();
 
-  // Listen for code blocks
   socket.on("codeBlocks", (codeBlocks) => {
     const codeBlockList = document.getElementById("codeBlockList");
     codeBlockList.innerHTML = "";

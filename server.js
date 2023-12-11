@@ -46,7 +46,6 @@ io.on("connection", (socket) => {
     }
   });
 
-  // Emit code block data to the client when they join the code block page
   socket.on("joinCodeBlock", ({ blockIndex }) => {
     if (!mentorSocket) {
       // The first user is a mentor
@@ -59,7 +58,7 @@ io.on("connection", (socket) => {
       socket.role = "student";
     }
 
-    console.log("User role:", socket.role); 
+    console.log("User role:", socket.role);
     console.log("User socket.id:", socket.id);
 
     // Join a room corresponding to the code block index
@@ -78,7 +77,6 @@ io.on("connection", (socket) => {
     );
   });
 
-  // Handle code changes
   socket.on("codeChange", (data) => {
     io.to(data.blockIndex).emit("codeChange", data);
 

@@ -26,7 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
     indentUnit: 2,
   });
 
-  // Listen for the initial code block data
   socket.on("initialCodeBlockData", (data) => {
     h1.textContent = "Code Block " + data.title + " Function";
     document.title = `Code Block - ${data.title}`;
@@ -35,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
     codeEditor.setValue(data.code);
   });
 
-  // Listen for mentor's socket ID
   socket.on("mentorSocket", (mentorSocket) => {
     mentorSocketId = mentorSocket;
     // If the current user is the student, allow editing
@@ -53,7 +51,6 @@ document.addEventListener("DOMContentLoaded", function () {
     socket.emit("codeChange", { blockIndex, code: newCode });
   }, 500);
 
-  // Listen for real-time code changes
   socket.on(
     "codeChange",
     (data) => {
@@ -62,7 +59,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (currentCode !== data.code) {
         codeEditor.setValue(data.code);
-        // codeEditor.focus();
         codeEditor.setCursor(cursor);
       }
 
@@ -74,12 +70,10 @@ document.addEventListener("DOMContentLoaded", function () {
     2000
   );
 
-  // Display smiley when code matches solution
   socket.on("displaySmiley", (smile) => {
     correctAnswer.textContent = smile;
   });
 
-  //Handle local code changes and emit them to the server
   codeEditor.on("change", function () {
     const newCode = codeEditor.getValue();
     debouncedCodeChange(newCode);
