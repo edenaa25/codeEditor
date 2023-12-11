@@ -60,7 +60,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (currentCode !== data.code) {
       codeEditor.setValue(data.code);
-      codeEditor.setCursor(cursor);
+      codeEditor.focus();
+      codeEditor.setCursor(codeEditor.getCursor(), 0);
     }
 
     // If the current user is not the mentor, update the editor based on role
