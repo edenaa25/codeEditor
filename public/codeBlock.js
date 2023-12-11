@@ -48,10 +48,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Debounce the code change events using lodash's debounce - the delay help for a good sync
-  // const debouncedCodeChange = _.throttle((newCode) => {
-  //   socket.emit("codeChange", { blockIndex, code: newCode });
-  // }, 2000);
+  //Debounce the code change events using lodash's debounce - the delay help for a good sync
+  const debouncedCodeChange = _.throttle((newCode) => {
+    socket.emit("codeChange", { blockIndex, code: newCode });
+  }, 500);
 
   // Listen for real-time code changes
   socket.on("codeChange", (data) => {
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (currentCode !== data.code) {
       codeEditor.setValue(data.code);
       codeEditor.focus();
-      codeEditor.setCursor(codeEditor.lineCount(), 0);
+      codeEditor.setCursor(codeEditor, 0);
     }
 
     // If the current user is not the mentor, update the editor based on role
@@ -77,7 +77,6 @@ document.addEventListener("DOMContentLoaded", function () {
   //Handle local code changes and emit them to the server
   codeEditor.on("change", function () {
     const newCode = codeEditor.getValue();
-    // debouncedCodeChange(newCode);
-    socket.emit("codeChange", { blockIndex, code: newCode });
+    debouncedCodeChange(newCode);
   });
 });
