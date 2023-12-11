@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
     _.throttle(() => {
       if (currentCode !== data.code) {
         codeEditor.setValue(data.code);
-        // codeEditor.focus();
+        codeEditor.focus();
         codeEditor.setCursor(codeEditor.getCursor());
       }
     }, 5);
