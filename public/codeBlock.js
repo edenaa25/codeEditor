@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const explanation = document.getElementById("explanation");
   const goodLuckParagraph = document.getElementById("goodLuckParagraph");
   const correctAnswer = document.getElementById("correctAnswer");
+<<<<<<< HEAD
   const codeEditorContainer = document.getElementById("codeEditor");
 
   // Create CodeMirror instance
@@ -25,14 +26,19 @@ document.addEventListener("DOMContentLoaded", function () {
     indentUnit: 2,
     //readOnly: true, // Initial read-only for everyone
   });
+=======
+  const codeEditorContainer = document.getElementById("codeEditorContainer");
+  const codeEditor = document.getElementById("codeEditor");
+>>>>>>> 87a85a5188aae2a16e8d1e4c27f0d742276ddf83
 
   // Listen for the initial code block data
   socket.on("initialCodeBlockData", (data) => {
     h1.textContent = "Code Block " + data.title + " Function";
     document.title = `Code Block - ${data.title}`;
     explanation.textContent = data.explanation;
-    // Set the initial code in the CodeMirror editor
-    codeEditor.setValue(data.code);
+
+    codeEditor.innerText = data.code;
+    hljs.highlightElement(codeEditor);
   });
 
   // Listen for mentor's socket ID
@@ -41,10 +47,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // If the current user is the student, allow editing
     if (socket.id === mentorSocketId) {
       goodLuckParagraph.innerHTML = "<strong>You are in a mentor role</strong>";
-      codeEditor.setOption("readOnly", true);
+      codeEditor.contentEditable = "false";
+      // codeEditor.setAttribute("contenteditable", "false");
     } else {
       goodLuckParagraph.innerHTML = "<strong>Good luck champion!</strong>";
-      codeEditor.setOption("readOnly", false);
+      codeEditor.contentEditable = "true";
+      // codeEditor.setAttribute("contenteditable", "true");
     }
   });
 
@@ -56,10 +64,12 @@ document.addEventListener("DOMContentLoaded", function () {
   // Listen for real-time code changes
   socket.on("codeChange", (data) => {
     console.log("data.code obj from codeChange func code block : " + data.code);
-    // Update the code in the CodeMirror editor
-    const currentCode = codeEditor.getValue();
+
+    const currentCode = codeEditor.textContent;
+
     console.log("currentCode from codeChange func codeblock: " + currentCode);
 
+<<<<<<< HEAD
     let savedSelection;
 
     // Only update if the code is different to avoid unnecessary changes
@@ -70,15 +80,34 @@ document.addEventListener("DOMContentLoaded", function () {
     // Only update if the code is different to avoid unnecessary changes
     if (currentCode !== data.code) {
       codeEditor.setValue(data.code);
+=======
+    // Unset dataset.highlighted
+    codeEditor.removeAttribute("data-highlighted");
+
+    // Save cursor position
+    let savedSelection;
+
+    if (socket.id !== mentorSocketId && currentCode !== data.code) {
+      savedSelection = rangy.saveSelection();
+    }
+
+    // Only update if the code is different to avoid unnecessary changes
+    if (currentCode !== data.code) {
+      codeEditor.textContent = data.code;
+>>>>>>> 87a85a5188aae2a16e8d1e4c27f0d742276ddf83
       // Restore cursor position if savedSelection is defined
       if (savedSelection) {
         rangy.restoreSelection(savedSelection);
       }
+<<<<<<< HEAD
+=======
+      hljs.highlightElement(codeEditor);
+>>>>>>> 87a85a5188aae2a16e8d1e4c27f0d742276ddf83
     }
 
     // If the current user is not the mentor, update the editor based on role
     if (socket.id !== mentorSocketId) {
-      codeEditor.setOption("readOnly", false);
+      codeEditor.readOnly = false;
     }
     // rangy.restoreSelection(savedSelection);
   });
@@ -88,9 +117,9 @@ document.addEventListener("DOMContentLoaded", function () {
     correctAnswer.textContent = smile;
   });
 
-  //Handle local code changes and emit them to the server
-  codeEditor.on("change", function () {
-    const newCode = codeEditor.getValue();
+  // Handle local code changes and emit them to the server
+  codeEditorContainer.addEventListener("input", function () {
+    const newCode = codeEditor.textContent;
     debouncedCodeChange(newCode);
     console.log("Change func from code block: " + newCode);
   });

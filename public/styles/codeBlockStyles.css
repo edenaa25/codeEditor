@@ -12,10 +12,25 @@ body {
   height: auto;
 }
 
-#codeEditor {
+#codeEditorContainer {
   width: 100%;
-  max-width: 60%;
-  margin: 0% 1%;
+  max-width: 70%;
+  margin: 1% auto;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 7px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#codeEditor {
+  width: 90%;
+  min-height: 250px; /* Adjust the minimum height based on your preference */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  margin: auto;
 }
 
 #h1,
@@ -23,6 +38,9 @@ body {
 #correctAnswer {
   text-align: center;
   margin: 1% 0;
+}
+#explanation {
+  width: 60%;
 }
 
 #correctAnswer {
@@ -50,5 +68,9 @@ body {
   #goodLuckParagraph,
   #correctAnswer {
     font-size: 0.9em;
+  }
+
+  #explanation {
+    width: 90%;
   }
 }

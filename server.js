@@ -3,6 +3,7 @@ const http = require("http");
 const socketIO = require("socket.io");
 const path = require("path");
 const sqlite3 = require("sqlite3").verbose(); // Import SQLite library for DB
+const hljs = require("highlight.js");
 
 const app = express();
 const server = http.createServer(app);
@@ -16,8 +17,12 @@ const db = new sqlite3.Database("DataBase.db", (err) => {
   console.log("Connected to the in-memory SQlite database.");
 });
 
-// Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use(
+  "/styles",
+  express.static(path.join(__dirname, "node_modules/highlight.js/styles"))
+);
 
 app.get("/codeBlock/:id", (req, res) => {
   const blockId = req.params.id;
@@ -31,14 +36,12 @@ app.get("/codeBlock/:id", (req, res) => {
   });
 });
 
-// Set up a route for the lobby pahe (index.html)
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 let mentorSocket = null; // To store the mentor's socket // global value
 
-// Handle connections with socket
 io.on("connection", (socket) => {
   // Set default role to 'student'
   socket.role = "student";
