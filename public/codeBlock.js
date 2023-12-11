@@ -122,15 +122,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Listen for real-time code changes
   socket.on("codeChange", (data) => {
-    // Temporarily disable local change event
-    codeEditor.off("change", localChangeHandler);
-
     const currentCode = codeEditor.getValue();
 
     if (currentCode !== data.code) {
       codeEditor.operation(() => {
+        const cursorPos = codeEditor.getCursor(); // Save cursor position
         codeEditor.setValue(data.code);
-        codeEditor.setCursor(codeEditor.lineCount(), 0);
+        codeEditor.setCursor(cursorPos); // Restore cursor position
       });
     }
 
@@ -138,9 +136,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (socket.id !== mentorSocketId) {
       codeEditor.setOption("readOnly", false);
     }
-
-    // Re-enable local change event
-    codeEditor.on("change", localChangeHandler);
   });
 
   // Listen for mentor's socket ID
