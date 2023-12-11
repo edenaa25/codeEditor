@@ -62,19 +62,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("currentCode from codeChange func codeblock: " + currentCode);
 
-    // let savedSelection;
-
     // Only update if the code is different to avoid unnecessary changes
     if (currentCode !== data.code) {
-      // Save cursor position before updating code
-      // codeEditor.setValue(data.code);
-      const cursor = codeEditor.getCursor();
-      // Restore cursor position if cursor is defined
-      if (cursor) {
-        codeEditor.setValue(data.code);
-        codeEditor.focus();
-        codeEditor.setCursor(cursor);
-      }
+      codeEditor.setValue(data.code);
     }
     // If the current user is not the mentor, update the editor based on role
     if (socket.id !== mentorSocketId) {
