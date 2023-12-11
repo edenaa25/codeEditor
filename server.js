@@ -3,7 +3,6 @@ const http = require("http");
 const socketIO = require("socket.io");
 const path = require("path");
 const sqlite3 = require("sqlite3").verbose(); // Import SQLite library for DB
-// const hljs = require("highlight.js");
 
 const app = express();
 const server = http.createServer(app);
@@ -60,7 +59,7 @@ io.on("connection", (socket) => {
       socket.role = "student";
     }
 
-    console.log("User role:", socket.role); // Log the user's role
+    console.log("User role:", socket.role); 
     console.log("User socket.id:", socket.id);
 
     // Join a room corresponding to the code block index
@@ -81,7 +80,6 @@ io.on("connection", (socket) => {
 
   // Handle code changes
   socket.on("codeChange", (data) => {
-    // Broadcast the code change only to clients interested in the specific code block
     io.to(data.blockIndex).emit("codeChange", data);
 
     db.get(
@@ -94,13 +92,6 @@ io.on("connection", (socket) => {
           // Remove spaces and line breaks for comparison
           const userCodeWithoutSpaces = data.code.replace(/\s/g, "");
           const solutionWithoutSpaces = solutionCode.replace(/\s/g, "");
-
-          console.log(
-            "userCodeWithoutSpaces from server:" + userCodeWithoutSpaces
-          );
-          console.log(
-            "solutionWithoutSpaces from server: " + solutionWithoutSpaces
-          );
 
           // Check if the code matches the solution
           if (userCodeWithoutSpaces === solutionWithoutSpaces) {
@@ -116,9 +107,6 @@ io.on("connection", (socket) => {
     );
   });
 
-  //Handle disconnections
-  //Ensure that the mentorSocket is set to null when a mentor disconnects
-  // to allow the next connected user to become the mentor
   socket.on("disconnect", () => {
     if (socket.id === mentorSocket) {
       mentorSocket = null;

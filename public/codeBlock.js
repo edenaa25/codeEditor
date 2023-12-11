@@ -18,13 +18,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const codeEditorContainer = document.getElementById("codeEditor");
 
   // Create CodeMirror instance
-  const codeEditor = CodeMirror(codeEditorContainer, {
-    value: "", // Initial code content
+  const codeEditor = CodeMirror.fromTextArea(codeEditorContainer, {
+    value: "",
     mode: "javascript",
     lineNumbers: true,
     theme: "default",
     indentUnit: 2,
-    //readOnly: true, // Initial read-only for everyone
   });
 
   // Listen for the initial code block data
@@ -52,19 +51,16 @@ document.addEventListener("DOMContentLoaded", function () {
   // Debounce the code change events using lodash's debounce - the delay help for a good sync
   const debouncedCodeChange = _.throttle((newCode) => {
     socket.emit("codeChange", { blockIndex, code: newCode });
-  }, 1000); // Adjust the debounce delay as needed
+  }, 500);
 
   // Listen for real-time code changes
   socket.on("codeChange", (data) => {
-    console.log("data.code obj from codeChange func code block : " + data.code);
-
     const currentCode = codeEditor.getValue();
 
-    console.log("currentCode from codeChange func codeblock: " + currentCode);
-
-    // Only update if the code is different to avoid unnecessary changes
     if (currentCode !== data.code) {
       codeEditor.setValue(data.code);
+      codeEditor.focus();
+      codeEditor.setCursor(codeEditor.lineCount(), 0);
     }
     // If the current user is not the mentor, update the editor based on role
     if (socket.id !== mentorSocketId) {
@@ -81,6 +77,5 @@ document.addEventListener("DOMContentLoaded", function () {
   codeEditor.on("change", function () {
     const newCode = codeEditor.getValue();
     debouncedCodeChange(newCode);
-    console.log("Change func from code block: " + newCode);
   });
 });
