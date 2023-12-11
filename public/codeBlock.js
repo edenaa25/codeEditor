@@ -88,7 +88,7 @@ function handleKeyPress() {
 
 // Function to handle the keydown event
 function onKeyDownHandler(event) {
-  setTimeout(handleKeyPress, 1000);
+  setTimeout(handleKeyPress, 5000);
 }
 
 // Add the event listener to the document
