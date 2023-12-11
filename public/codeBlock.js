@@ -135,18 +135,13 @@ document.addEventListener("DOMContentLoaded", function () {
     // Only update if the code is different to avoid unnecessary changes
     if (currentCode !== data.code) {
       const scrollPosition = codeEditor.getScrollInfo();
+      const selection = codeEditor.getSelection();
+
       codeEditor.setValue(data.code);
 
-      // Restore cursor position if saved cursor is within the code range
-      if (
-        cursor.line < codeEditor.lineCount() &&
-        cursor.ch < codeEditor.getLine(cursor.line).length
-      ) {
-        codeEditor.setCursor(cursor);
-      } else {
-        // Set cursor to the end of the last line if the saved cursor is out of range
-        codeEditor.setCursor(codeEditor.lineCount(), 0);
-      }
+      // Restore cursor position and selection
+      codeEditor.setCursor(cursor);
+      codeEditor.setSelection(selection.head, selection.anchor);
 
       // Restore scroll position
       codeEditor.scrollTo(scrollPosition.left, scrollPosition.top);
