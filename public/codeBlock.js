@@ -67,15 +67,14 @@ document.addEventListener("DOMContentLoaded", function () {
     // Only update if the code is different to avoid unnecessary changes
     if (currentCode !== data.code) {
       // Save cursor position before updating code
+      // codeEditor.setValue(data.code);
       const cursor = codeEditor.getCursor();
-      codeEditor.setValue(data.code);
-
       // Restore cursor position if cursor is defined
       if (cursor) {
+        codeEditor.setValue(data.code);
         codeEditor.setCursor(cursor);
       }
     }
-
     // If the current user is not the mentor, update the editor based on role
     if (socket.id !== mentorSocketId) {
       codeEditor.setOption("readOnly", false);
