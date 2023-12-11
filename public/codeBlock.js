@@ -10,45 +10,21 @@ document.addEventListener("DOMContentLoaded", function () {
   let mentorSocketId;
 
   // Create and append HTML elements
-  const h1 = document.createElement("h1");
-  h1.id = "h1";
-  document.body.appendChild(h1);
-
-  const explanation = document.createElement("p");
-  explanation.id = "explanation";
-  document.body.appendChild(explanation);
-
-  const goodLuckParagraph = document.createElement("p");
-  explanation.id = "goodLuckParagraph";
-  document.body.appendChild(goodLuckParagraph);
-
-  const correctAnswer = document.createElement("p");
-  correctAnswer.id = "correctAnswer";
-  document.body.appendChild(correctAnswer);
-
-  const codeEditorContainer = document.createElement("div");
-  codeEditorContainer.id = "codeEditor";
-  document.body.appendChild(codeEditorContainer);
-
-  // Create CodeMirror instance
-  const codeEditor = CodeMirror(codeEditorContainer, {
-    value: "", // Initial code content
-    mode: "javascript",
-    lineNumbers: true,
-    theme: "default",
-    indentUnit: 2,
-    //readOnly: true, // Initial read-only for everyone
-  });
+  const h1 = document.getElementById("h1");
+  const explanation = document.getElementById("explanation");
+  const goodLuckParagraph = document.getElementById("goodLuckParagraph");
+  const correctAnswer = document.getElementById("correctAnswer");
+  const codeEditorContainer = document.getElementById("codeEditorContainer");
+  const codeEditor = document.getElementById("codeEditor");
 
   // Listen for the initial code block data
   socket.on("initialCodeBlockData", (data) => {
-    //DATA is a row from database
-    // Display the code block title+ h1 + <p>
     h1.textContent = "Code Block " + data.title + " Function";
     document.title = `Code Block - ${data.title}`;
     explanation.textContent = data.explanation;
-    // Set the initial code in the CodeMirror editor
-    codeEditor.setValue(data.code);
+
+    codeEditor.innerText = data.code;
+    hljs.highlightElement(codeEditor);
   });
 
   // Listen for mentor's socket ID
@@ -57,10 +33,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // If the current user is the student, allow editing
     if (socket.id === mentorSocketId) {
       goodLuckParagraph.innerHTML = "<strong>You are in a mentor role</strong>";
-      codeEditor.setOption("readOnly", true);
+      codeEditor.contentEditable = "false";
+      // codeEditor.setAttribute("contenteditable", "false");
     } else {
       goodLuckParagraph.innerHTML = "<strong>Good luck champion!</strong>";
-      codeEditor.setOption("readOnly", false);
+      codeEditor.contentEditable = "true";
+      // codeEditor.setAttribute("contenteditable", "true");
     }
   });
 
@@ -72,18 +50,34 @@ document.addEventListener("DOMContentLoaded", function () {
   // Listen for real-time code changes
   socket.on("codeChange", (data) => {
     console.log("data.code obj from codeChange func code block : " + data.code);
-    // Update the code in the CodeMirror editor
-    const currentCode = codeEditor.getValue();
+
+    const currentCode = codeEditor.textContent;
+
     console.log("currentCode from codeChange func codeblock: " + currentCode);
+
+    // Unset dataset.highlighted
+    codeEditor.removeAttribute("data-highlighted");
+
+    // Save cursor position
+    let savedSelection;
+
+    if (socket.id !== mentorSocketId && currentCode !== data.code) {
+      savedSelection = rangy.saveSelection();
+    }
 
     // Only update if the code is different to avoid unnecessary changes
     if (currentCode !== data.code) {
-      codeEditor.setValue(data.code);
+      codeEditor.textContent = data.code;
+      // Restore cursor position if savedSelection is defined
+      if (savedSelection) {
+        rangy.restoreSelection(savedSelection);
+      }
+      hljs.highlightElement(codeEditor);
     }
 
     // If the current user is not the mentor, update the editor based on role
     if (socket.id !== mentorSocketId) {
-      codeEditor.setOption("readOnly", false);
+      codeEditor.readOnly = false;
     }
   });
 
@@ -92,9 +86,9 @@ document.addEventListener("DOMContentLoaded", function () {
     correctAnswer.textContent = smile;
   });
 
-  //Handle local code changes and emit them to the server
-  codeEditor.on("change", function () {
-    const newCode = codeEditor.getValue();
+  // Handle local code changes and emit them to the server
+  codeEditorContainer.addEventListener("input", function () {
+    const newCode = codeEditor.textContent;
     debouncedCodeChange(newCode);
     console.log("Change func from code block: " + newCode);
   });
