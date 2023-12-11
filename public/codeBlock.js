@@ -57,13 +57,11 @@ document.addEventListener("DOMContentLoaded", function () {
   socket.on("codeChange", (data) => {
     const currentCode = codeEditor.getValue();
 
-    _.throttle(() => {
-      if (currentCode !== data.code) {
-        codeEditor.setValue(data.code);
-        codeEditor.focus();
-        codeEditor.setCursor(codeEditor.getCursor());
-      }
-    }, 5);
+    if (currentCode !== data.code) {
+      codeEditor.setValue(data.code);
+      codeEditor.focus();
+      codeEditor.setCursor(codeEditor.getCursor());
+    }
 
     // If the current user is not the mentor, update the editor based on role
     if (socket.id !== mentorSocketId) {
