@@ -3,7 +3,7 @@ const http = require("http");
 const socketIO = require("socket.io");
 const path = require("path");
 const sqlite3 = require("sqlite3").verbose(); // Import SQLite library for DB
-const hljs = require("highlight.js");
+// const hljs = require("highlight.js");
 
 const app = express();
 const server = http.createServer(app);
@@ -18,11 +18,6 @@ const db = new sqlite3.Database("DataBase.db", (err) => {
 });
 
 app.use(express.static(path.join(__dirname, "public")));
-
-app.use(
-  "/styles",
-  express.static(path.join(__dirname, "node_modules/highlight.js/styles"))
-);
 
 app.get("/codeBlock/:id", (req, res) => {
   const blockId = req.params.id;

@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const explanation = document.getElementById("explanation");
   const goodLuckParagraph = document.getElementById("goodLuckParagraph");
   const correctAnswer = document.getElementById("correctAnswer");
-<<<<<<< HEAD
+
   const codeEditorContainer = document.getElementById("codeEditor");
 
   // Create CodeMirror instance
@@ -26,10 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
     indentUnit: 2,
     //readOnly: true, // Initial read-only for everyone
   });
-=======
-  const codeEditorContainer = document.getElementById("codeEditorContainer");
-  const codeEditor = document.getElementById("codeEditor");
->>>>>>> 87a85a5188aae2a16e8d1e4c27f0d742276ddf83
 
   // Listen for the initial code block data
   socket.on("initialCodeBlockData", (data) => {
@@ -37,8 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.title = `Code Block - ${data.title}`;
     explanation.textContent = data.explanation;
 
-    codeEditor.innerText = data.code;
-    hljs.highlightElement(codeEditor);
+    codeEditor.setValue(data.code);
   });
 
   // Listen for mentor's socket ID
@@ -47,12 +42,10 @@ document.addEventListener("DOMContentLoaded", function () {
     // If the current user is the student, allow editing
     if (socket.id === mentorSocketId) {
       goodLuckParagraph.innerHTML = "<strong>You are in a mentor role</strong>";
-      codeEditor.contentEditable = "false";
-      // codeEditor.setAttribute("contenteditable", "false");
+      codeEditor.setOption("readOnly", true);
     } else {
       goodLuckParagraph.innerHTML = "<strong>Good luck champion!</strong>";
-      codeEditor.contentEditable = "true";
-      // codeEditor.setAttribute("contenteditable", "true");
+      codeEditor.setOption("readOnly", false);
     }
   });
 
@@ -65,51 +58,28 @@ document.addEventListener("DOMContentLoaded", function () {
   socket.on("codeChange", (data) => {
     console.log("data.code obj from codeChange func code block : " + data.code);
 
-    const currentCode = codeEditor.textContent;
+    const currentCode = codeEditor.getValue();
 
     console.log("currentCode from codeChange func codeblock: " + currentCode);
 
-<<<<<<< HEAD
-    let savedSelection;
-
-    // Only update if the code is different to avoid unnecessary changes
-    // if (currentCode !== data.code) {
-    //   codeEditor.setValue(data.code);
-    // }
+    // let savedSelection;
 
     // Only update if the code is different to avoid unnecessary changes
     if (currentCode !== data.code) {
+      // Save cursor position before updating code
+      const cursor = codeEditor.getCursor();
       codeEditor.setValue(data.code);
-=======
-    // Unset dataset.highlighted
-    codeEditor.removeAttribute("data-highlighted");
 
-    // Save cursor position
-    let savedSelection;
-
-    if (socket.id !== mentorSocketId && currentCode !== data.code) {
-      savedSelection = rangy.saveSelection();
-    }
-
-    // Only update if the code is different to avoid unnecessary changes
-    if (currentCode !== data.code) {
-      codeEditor.textContent = data.code;
->>>>>>> 87a85a5188aae2a16e8d1e4c27f0d742276ddf83
-      // Restore cursor position if savedSelection is defined
-      if (savedSelection) {
-        rangy.restoreSelection(savedSelection);
+      // Restore cursor position if cursor is defined
+      if (cursor) {
+        codeEditor.setCursor(cursor);
       }
-<<<<<<< HEAD
-=======
-      hljs.highlightElement(codeEditor);
->>>>>>> 87a85a5188aae2a16e8d1e4c27f0d742276ddf83
     }
 
     // If the current user is not the mentor, update the editor based on role
     if (socket.id !== mentorSocketId) {
-      codeEditor.readOnly = false;
+      codeEditor.setOption("readOnly", false);
     }
-    // rangy.restoreSelection(savedSelection);
   });
 
   // Display smiley when code matches solution
@@ -117,9 +87,9 @@ document.addEventListener("DOMContentLoaded", function () {
     correctAnswer.textContent = smile;
   });
 
-  // Handle local code changes and emit them to the server
-  codeEditorContainer.addEventListener("input", function () {
-    const newCode = codeEditor.textContent;
+  //Handle local code changes and emit them to the server
+  codeEditor.on("change", function () {
+    const newCode = codeEditor.getValue();
     debouncedCodeChange(newCode);
     console.log("Change func from code block: " + newCode);
   });

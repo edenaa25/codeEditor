@@ -12,7 +12,7 @@ body {
   height: auto;
 }
 
-#codeEditorContainer {
+/* #codeEditorContainer {
   width: 100%;
   max-width: 70%;
   margin: 1% auto;
@@ -21,11 +21,11 @@ body {
   border-radius: 5px;
   padding: 7px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+} */
 
 #codeEditor {
   width: 90%;
-  min-height: 250px; /* Adjust the minimum height based on your preference */
+  min-height: 250px;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
