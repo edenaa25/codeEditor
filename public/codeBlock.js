@@ -81,3 +81,33 @@ document.addEventListener("DOMContentLoaded", function () {
     debouncedCodeChange(newCode);
   });
 });
+
+// Set a variable to track whether the timeout is active
+let timeoutActive = false;
+
+// Function to be executed after the timeout
+function handleKeyPress() {
+  // Your logic here
+  console.log("Key pressed!");
+
+  // Reset the timeout status
+  timeoutActive = false;
+}
+
+// Function to handle the keydown event
+function onKeyDownHandler(event) {
+  // Check if a timeout is already active
+  if (!timeoutActive) {
+    // Set a timeout of 1000 milliseconds (1 second)
+    setTimeout(handleKeyPress, 1000);
+
+    // Set the timeout status to true
+    timeoutActive = true;
+  } else {
+    // If a timeout is already active, you may choose to do nothing or handle it differently
+    console.log("Timeout is already active. Ignoring key press.");
+  }
+}
+
+// Add the event listener to the document
+document.addEventListener("keydown", onKeyDownHandler);
