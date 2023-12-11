@@ -60,10 +60,10 @@ document.addEventListener("DOMContentLoaded", function () {
     _.throttle(() => {
       if (currentCode !== data.code) {
         codeEditor.setValue(data.code);
-        codeEditor.focus();
-        codeEditor.setCursor(codeEditor.lineCount(), 0);
+        // codeEditor.focus();
+        codeEditor.setCursor(codeEditor.getCursor());
       }
-    }, 500);
+    }, 5);
 
     // If the current user is not the mentor, update the editor based on role
     if (socket.id !== mentorSocketId) {
