@@ -54,21 +54,25 @@ document.addEventListener("DOMContentLoaded", function () {
   }, 500);
 
   // Listen for real-time code changes
-  socket.on("codeChange", (data) => {
-    const currentCode = codeEditor.getValue();
-    const cursor = codeEditor.getCursor();
+  socket.on(
+    "codeChange",
+    (data) => {
+      const currentCode = codeEditor.getValue();
+      const cursor = codeEditor.getCursor();
 
-    if (currentCode !== data.code) {
-      codeEditor.setValue(data.code);
-      // codeEditor.focus();
-      codeEditor.setCursor(cursor);
-    }
+      if (currentCode !== data.code) {
+        codeEditor.setValue(data.code);
+        // codeEditor.focus();
+        codeEditor.setCursor(cursor);
+      }
 
-    // If the current user is not the mentor, update the editor based on role
-    if (socket.id !== mentorSocketId) {
-      codeEditor.setOption("readOnly", false);
-    }
-  });
+      // If the current user is not the mentor, update the editor based on role
+      if (socket.id !== mentorSocketId) {
+        codeEditor.setOption("readOnly", false);
+      }
+    },
+    2000
+  );
 
   // Display smiley when code matches solution
   socket.on("displaySmiley", (smile) => {
@@ -81,15 +85,3 @@ document.addEventListener("DOMContentLoaded", function () {
     debouncedCodeChange(newCode);
   });
 });
-// Function to be executed after the timeout
-function handleKeyPress() {
-  console.log("Key pressed!");
-}
-
-// Function to handle the keydown event
-function onKeyDownHandler(event) {
-  setTimeout(handleKeyPress, 5000);
-}
-
-// Add the event listener to the document
-document.addEventListener("keydown", onKeyDownHandler);
