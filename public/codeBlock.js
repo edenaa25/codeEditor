@@ -46,36 +46,29 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  //Debounce the code change events using lodash's debounce - the delay help for a good sync
-  const debouncedCodeChange = _.throttle((newCode) => {
-    socket.emit("codeChange", { blockIndex, code: newCode });
-  }, 500);
+  socket.on("codeChange", (data) => {
+    const currentCode = codeEditor.getValue();
+    const cursor = codeEditor.getCursor();
 
-  socket.on(
-    "codeChange",
-    (data) => {
-      const currentCode = codeEditor.getValue();
-      const cursor = codeEditor.getCursor();
+    if (currentCode !== data.code && socket.id === mentorSocketId) {
+      codeEditor.setValue(data.code);
+      codeEditor.setCursor(cursor);
+    }
 
-      if (currentCode !== data.code) {
-        codeEditor.setValue(data.code);
-        codeEditor.setCursor(cursor);
-      }
-
-      // If the current user is not the mentor, update the editor based on role
-      if (socket.id !== mentorSocketId) {
-        codeEditor.setOption("readOnly", false);
-      }
-    },
-    2000
-  );
+    if (socket.id !== mentorSocketId) {
+      codeEditor.setOption("readOnly", false);
+    }
+  });
 
   socket.on("displaySmiley", (smile) => {
     correctAnswer.textContent = smile;
   });
 
   codeEditor.on("change", function () {
-    const newCode = codeEditor.getValue();
-    debouncedCodeChange(newCode);
+    // If I am a student, send the change
+    if (socket.id !== mentorSocketId) {
+      const newCode = codeEditor.getValue();
+      socket.emit("codeChange", { blockIndex, code: newCode });
+    }
   });
 });
