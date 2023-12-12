@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", function () {
   socket.emit("joinCodeBlock", { blockIndex });
 
   let mentorSocketId;
+  let mySocketId;
+  let emitCodeChange = true;
 
   // Create and append HTML elements
   const h1 = document.getElementById("h1");
@@ -30,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
     h1.textContent = "Code Block " + data.title + " Function";
     document.title = `Code Block - ${data.title}`;
     explanation.textContent = data.explanation;
-
+    mySocketId = socket.id;
     codeEditor.setValue(data.code);
   });
 
@@ -50,7 +52,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const currentCode = codeEditor.getValue();
     const cursor = codeEditor.getCursor();
 
-    if (currentCode !== data.code && socket.id === mentorSocketId) {
+    if (currentCode !== data.code && data.socketSender != mySocketId) {
+      emitCodeChange = false;
       codeEditor.setValue(data.code);
       codeEditor.setCursor(cursor);
     }
@@ -66,9 +69,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   codeEditor.on("change", function () {
     // If I am a student, send the change
-    if (socket.id !== mentorSocketId) {
+    if (socket.id !== mentorSocketId && emitCodeChange) {
       const newCode = codeEditor.getValue();
-      socket.emit("codeChange", { blockIndex, code: newCode });
+      socket.emit("codeChange", {
+        socketSender: mySocketId,
+        blockIndex,
+        code: newCode,
+      });
     }
+    emitCodeChange = true;
   });
 });
